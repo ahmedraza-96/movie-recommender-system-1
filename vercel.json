@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": { 
+        "distDir": "build",
+        "buildCommand": "cd frontend && npm install && npm run build"
+      }
+    },
+    {
+      "src": "backend/api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/api/index.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/frontend/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/frontend/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/frontend/manifest.json"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/frontend/robots.txt"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/index.html"
+    }
+  ]
+} 

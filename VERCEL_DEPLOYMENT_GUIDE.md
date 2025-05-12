@@ -1,101 +1,110 @@
-# Step-by-Step Guide to Deploy Your Movie Recommender System on Vercel
+# Vercel Deployment Guide: Movie Recommender System
 
-This guide will walk you through the process of deploying your React frontend to Vercel.
+## Project Overview
 
-## Prerequisites
+This project consists of:
+- **Frontend**: React application for the movie recommendation interface
+- **Backend**: Flask API providing movie recommendation functionality
 
-1. GitHub account
-2. Vercel account (sign up at https://vercel.com)
-3. Git installed on your local machine
+## Project Structure
 
-## Step 1: Prepare Your Repository
+```
+project-root/
+├── frontend/                 # React app (Movie App)
+│   ├── src/
+│   └── package.json
+│
+├── backend/                  # Flask server (APIs)
+│   ├── app.py                # Main Flask app
+│   ├── api/                  # API routes
+│   │   ├── __init__.py       # Makes the directory a Python package
+│   │   ├── index.py          # Serverless function handler
+│   │   ├── movies.py         # Movie API endpoints
+│   ├── model.joblib          # (if applicable) Joblib model file
+│   └── requirements.txt      # Flask dependencies
+│
+└── vercel.json               # Vercel configuration
+```
 
-1. If you haven't already, initialize a Git repository in your project folder:
-   ```bash
-   cd /path/to/your/project
-   git init
-   ```
+## Deployment Steps
 
-2. Add all files to the repository:
-   ```bash
-   git add .
-   ```
+### 1. Clone the Repository
 
-3. Commit the changes:
-   ```bash
-   git commit -m "Initial commit for Vercel deployment"
-   ```
+```bash
+git clone <your-repo-url>
+cd movie-recommender-system
+```
 
-4. Create a repository on GitHub: 
-   - Go to github.com
-   - Click on "New repository"
-   - Name your repository (e.g., "movie-recommender-system")
-   - Click "Create repository"
+### 2. Install Vercel CLI
 
-5. Link your local repository to GitHub:
-   ```bash
-   git remote add origin https://github.com/yourusername/movie-recommender-system.git
-   ```
+```bash
+npm install -g vercel
+```
 
-6. Push your code to GitHub:
-   ```bash
-   git push -u origin main
-   ```
-   (If your default branch is named "master", use that instead of "main")
+### 3. Login to Vercel
 
-## Step 2: Deploy on Vercel
+```bash
+vercel login
+```
 
-1. Log in to your Vercel account at https://vercel.com
+### 4. Deploy the Project
 
-2. Click "Add New" > "Project"
+```bash
+vercel
+```
 
-3. Import your Git repository:
-   - Select your GitHub account
-   - Find and select your "movie-recommender-system" repository
-   - Click "Import"
+During deployment, Vercel will:
+1. Install backend dependencies listed in `backend/requirements.txt`
+2. Build the frontend using `npm run build` in the frontend directory
+3. Set up serverless functions for the Flask API
+4. Configure routing based on `vercel.json`
 
-4. Configure your project:
-   - Set the root directory to "movie-app"
-   - Framework Preset: Create React App
-   - Build Command: npm run build (should be auto-filled)
-   - Output Directory: build (should be auto-filled)
+### 5. Environment Variables
 
-5. Environment Variables:
-   - Expand the "Environment Variables" section
-   - Add the following variables:
-     - Name: REACT_APP_API_KEY, Value: 8321fba1bd0a71fd23430a1b4d42bfd9
-     - Name: REACT_APP_BACKEND_URL, Value: https://movie-recommender-system2.onrender.com
+Set these environment variables in the Vercel dashboard:
+- `REACT_APP_API_KEY`: Your TMDB API key
 
-6. Click "Deploy"
+### 6. Troubleshooting
 
-7. Wait for the deployment to complete. Vercel will provide a URL for your deployed application.
+If you encounter any issues:
 
-## Step 3: Verify Your Deployment
+1. **API Connection Issues**:
+   - Check the network requests in browser DevTools
+   - Ensure the API routes in `vercel.json` are correct
 
-1. Once the deployment is complete, click on the provided URL to open your application.
+2. **Build Failures**:
+   - Check Vercel logs for error messages
+   - Verify Python dependencies in `requirements.txt`
+   - Make sure all necessary files are included in the repository
 
-2. Test your application to ensure everything is working properly:
-   - Check that movie data is loading
-   - Verify that movie recommendations are working
-   - Test the search functionality
+3. **Loading Time Issues**:
+   - The initial request might be slower due to cold starts with serverless functions
+   - Subsequent requests should be faster
 
-## Troubleshooting
+## API Endpoints
 
-If you encounter any issues during deployment:
+- `GET /api/movies` - Get a list of all available movies
+- `GET /api/similarity/{movie_name}` - Get movie recommendations based on a movie name
 
-1. **Build Errors**: Check the build logs in the Vercel dashboard for specific error messages.
+## Local Development
 
-2. **API Connection Issues**: Verify that your environment variables are set correctly in the Vercel dashboard.
+### Frontend
 
-3. **Backend Connection Problems**: 
-   - Make sure your backend is accessible at the URL you've specified
-   - Check for CORS issues if the frontend can't connect to the backend
+```bash
+cd frontend
+npm install
+npm start
+```
 
-4. **Need to Update Your Deployment**: 
-   - Make changes locally
-   - Commit and push to GitHub
-   - Vercel will automatically redeploy your site
+### Backend
 
-## Congratulations!
+```bash
+cd backend
+pip install -r requirements.txt
+python app.py
+```
 
-Your Movie Recommender System is now deployed on Vercel. You can share the URL with others to let them use your application. 
+## Additional Resources
+
+- [Vercel Documentation](https://vercel.com/docs)
+- [Flask on Vercel](https://vercel.com/guides/using-flask-with-vercel) 
