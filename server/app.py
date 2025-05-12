@@ -56,7 +56,7 @@ def moviess():
 @app.route('/')
 @cross_origin()
 def home():
-    return "Sonu"
+    return "ahmed raza"
 
 
 @app.route('/api/similarity/<name>')

@@ -1,6 +1,56 @@
-# Getting Started with Create React App
+# Movie Recommender System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application that recommends movies based on user preferences using content-based filtering and clustering techniques.
+
+## Deployment on Vercel
+
+### Prerequisites
+
+1. GitHub account
+2. Vercel account (sign up at https://vercel.com)
+3. Git installed on your local machine
+
+### Deployment Steps
+
+1. **Push your code to GitHub**
+   ```bash
+   cd movie-app
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/yourusername/movie-recommender-system.git
+   git push -u origin main
+   ```
+
+2. **Deploy to Vercel**
+   
+   - Log in to your Vercel account
+   - Click on "Import Project"
+   - Select "Import Git Repository"
+   - Enter your GitHub repository URL
+   - Configure the project:
+     - Framework Preset: Create React App
+     - Root Directory: movie-app
+     - Build Command: npm run build
+     - Output Directory: build
+   - Click "Deploy"
+
+3. **Environment Variables (if needed)**
+   
+   If you need to set environment variables, you can do so in the Vercel dashboard:
+   - Go to your project settings
+   - Navigate to the "Environment Variables" tab
+   - Add any necessary variables (e.g., API keys)
+
+## Backend Connection
+
+The frontend is configured to connect to the backend API at:
+```
+https://movie-recommender-system2.onrender.com
+```
+
+If you need to change this URL, update the following files:
+- src/components/Home.jsx
 
 ## Available Scripts
 
