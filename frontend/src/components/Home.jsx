@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import requests from "../Requests";
 import Hero from "./Hero/Hero";
 import Slider from "./Slider/Slider";
@@ -17,7 +17,7 @@ const Home = () => {
   const apiBase = "/api";
 
   // Function to fetch movie recommendations
-  const getRecommendationMovie = async (movieTitle) => {
+  const getRecommendationMovie = useCallback(async (movieTitle) => {
     try {
       const similarityResponse = await fetch(
         `${apiBase}/similarity/${movieTitle}`
@@ -45,7 +45,7 @@ const Home = () => {
     } catch (err) {
       setError("Failed to load recommendations. Please try again later.");
     }
-  };
+  }, [apiBase, apiKey]);
 
   // Function to fetch popular movies
   const fetchPopularMovies = async () => {
@@ -79,7 +79,7 @@ const Home = () => {
     };
 
     fetchData();
-  }, [movie]);
+  }, [movie, getRecommendationMovie]);
 
   return (
     <main className="min-h-screen pt-16">

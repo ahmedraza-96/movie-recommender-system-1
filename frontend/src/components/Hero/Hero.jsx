@@ -146,6 +146,7 @@ const Hero = ({ movies }) => {
                     className="w-full text-left px-5 py-3 hover:bg-light-dark border-b border-gray-100 transition-colors flex items-center focus:outline-none focus:bg-light-dark"
                     onClick={() => handleMovieSelect(movie)}
                     role="option"
+                    aria-selected={false}
                   >
                     <span className="text-primary mr-2 font-medium">{index + 1}.</span>
                     {movie}

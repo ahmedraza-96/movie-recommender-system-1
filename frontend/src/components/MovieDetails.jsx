@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { FiPlay, FiX, FiStar, FiCalendar, FiClock, FiFilm, FiUsers } from "react-icons/fi";
+import { FiPlay, FiX, FiCalendar, FiClock, FiUsers } from "react-icons/fi";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Slider from "./Slider/Slider";
