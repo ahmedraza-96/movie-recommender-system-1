@@ -26,7 +26,7 @@ def get_similarity(name):
 def home():
     return "Movie Recommendation System API"
 
-# Handle 404 errors - return index.html for frontend routes
+# Handle 404 errors
 @app.errorhandler(404)
 def not_found(e):
     return "Route not found", 404
