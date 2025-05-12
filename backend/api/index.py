@@ -1,44 +1,82 @@
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import parse_qs, urlparse
 import json
-import sys
-import os
+import urllib.parse
 
-# Add the parent directory to the path to be able to import from the app
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, parent_dir)
+# Hardcoded sample data
+SAMPLE_MOVIES = [
+    "Avatar", "Titanic", "Star Wars: The Force Awakens", "Avengers: Endgame", 
+    "Jurassic World", "The Lion King", "The Avengers", "Furious 7", 
+    "Frozen II", "Avengers: Infinity War", "Black Panther", 
+    "Harry Potter and the Deathly Hallows: Part 2", "The Dark Knight", 
+    "Joker", "Toy Story 4", "Toy Story 3", "Wonder Woman", "Frozen", 
+    "Iron Man 3", "Captain Marvel", "Spider-Man: Far from Home"
+]
 
-# Import the functions directly to avoid Flask dependency issues
-from api.movies import movies_endpoint, similarity_endpoint
+# Simple recommendation function
+def get_recommendations(movie_name):
+    movie_name = movie_name.lower()
+    
+    # Find similar movies (very basic approach)
+    if "avengers" in movie_name or "iron man" in movie_name:
+        similar = ["The Avengers", "Avengers: Infinity War", "Iron Man 3", "Captain Marvel"]
+    elif "star wars" in movie_name:
+        similar = ["Star Wars: The Force Awakens"]
+    elif "toy story" in movie_name:
+        similar = ["Toy Story 3", "Toy Story 4"]
+    elif "harry potter" in movie_name:
+        similar = ["Harry Potter and the Deathly Hallows: Part 2"]
+    else:
+        # Return a default subset
+        similar = SAMPLE_MOVIES[:5]
+        
+    return similar
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-        self.end_headers()
-        
-        # Parse the URL
-        parsed_url = urlparse(self.path)
-        path = parsed_url.path
-        
-        # Route the request to the appropriate endpoint
-        response = {"error": "Route not found"}
-        
-        if path == '/api/movies':
-            response = movies_endpoint()
-        elif path.startswith('/api/similarity/'):
-            # Extract movie name from URL
-            movie_name = path.replace('/api/similarity/', '')
-            response = similarity_endpoint(movie_name)
-        
-        # Convert response to JSON string
-        if isinstance(response, dict):
-            response_json = json.dumps(response)
-        else:
-            # If it's already a flask.Response with JSON data
-            response_json = json.dumps(response.json)
+        try:
+            # Add CORS headers
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            self.end_headers()
             
-        self.wfile.write(response_json.encode('utf-8')) 
+            path = self.path
+            
+            # Handle /api/movies endpoint
+            if path == '/api/movies':
+                response = {'arr': SAMPLE_MOVIES}
+                self.wfile.write(json.dumps(response).encode())
+                
+            # Handle /api/similarity/{movie_name} endpoint
+            elif path.startswith('/api/similarity/'):
+                # Extract movie name from URL
+                movie_name = path.replace('/api/similarity/', '')
+                movie_name = urllib.parse.unquote(movie_name)  # URL decode
+                
+                # Get recommendations
+                recommendations = get_recommendations(movie_name)
+                response = {'movies': recommendations}
+                self.wfile.write(json.dumps(response).encode())
+                
+            else:
+                # Default response
+                self.wfile.write(json.dumps({'status': 'API is running'}).encode())
+                
+        except Exception as e:
+            # Log and return the error
+            error_response = {
+                'error': str(e),
+                'path': self.path
+            }
+            self.wfile.write(json.dumps(error_response).encode())
+            
+    def do_OPTIONS(self):
+        # Handle preflight requests
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+        self.wfile.write(b'') 
